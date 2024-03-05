@@ -1,14 +1,16 @@
-const learned = [];
-const learnedPairs = [];
-const resagados = [];
+import { permutations } from "./permutations.js";
+import { orientations } from "./orientations.js";
 
 const subsets = ["SS1", "SS2", "U", "T", "Asymetric1", "Asymetric2"];
-const twists = [1, 2, 0, 0, 1, 2];
+const soap_orientations = {
+    'SS1': ['0002010', '0110010', '0101010', '2012010', '2021010', '0221010', '1121010', '2222010'],
+    'SS2': ['0001020', '0022020', '0202020', '1120020', '0121020', '0211020', '2122020', '1111020'],
+    'U': ['0222021', '1110021', '1020021', '2121021', '0012021', '0021021', '1122021'],
+    'T': ['0222010', '1110010', '1020010', '2121010', '0012010', '0021010', '1122010'],
+    'Asymetric1': ['0002022', '0110022', '0101022', '2012022', '2021022', '0221022', '1121022', '2222022'],
+    'Asymetric2': ['0001011', '0022020', '0202020', '1120020', '0121020', '0211020', '2122020', '1111020'],
+}
 
-const twist0 = ["sune", "antisune", "H", "L", "T", "U", "Pi"];
-const twist12 = ["frog", "kick", "merge", "push", "single", "split", "swim", "wheel"];
-
-const learnedSubsets = [];
 const learnedCases = [];
 
 let pos;
@@ -21,16 +23,7 @@ document.getElementById("go").onclick = () => {
     //Rellenar learnedCases (equivalente a learnedPairs)
     for (let i = 0; i < subsets.length; i++) {
         if (document.getElementById(subsets[i]).checked) {
-            if (twists[i] == 0) {
-                for (let j = 0; j < twist0.length; j++) {
-                    learnedCases.push([subsets[i], "twist0/"+twist0[j]]);
-                }
-            }
-            else {
-                for (let j = 0; j<twist12.length; j++) {
-                    learnedCases.push([subsets[i], "twist"+twists[i]+"/"+twist12[j]]);
-                }
-            }
+            learnedCases.push(...soap_orientations[subsets[i]])
         }
     }
 
@@ -41,24 +34,6 @@ document.getElementById("go").onclick = () => {
 }
 
 function getCase() {
-    //sconsole.log(learnedCases[pos]);
-    document.getElementById("case").innerHTML = '<img src="'+learnedCases[pos][1]+'.PNG"><br><img src="'+learnedCases[pos][0]+'.PNG">';
+    document.getElementById("case").innerHTML = learnedCases[pos];
     pos++;
-}
-
-function isLearned(pair) {
-    for (j = 0; j < learned.length; j++) {
-        if (pair.indexOf(learned[j]) != -1) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function guardar() {
-    resagados.push(learnedPairs[pos-1]);
-}
-
-function randint(min, max) {
-    return Math.floor(Math.random() * (max - min) ) + min;
 }
