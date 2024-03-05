@@ -33,6 +33,9 @@ document.getElementById("go").onclick = () => {
     getCase();
 }
 
+document.body.onkeydown = getCase;
+document.body.ontouchstart = getCase;
+
 function getCase() {
     // random state
     const orientation = learnedCases[pos];
@@ -50,4 +53,8 @@ function getCase() {
 
     document.getElementById("case").innerHTML = inverseAlg(full_solution);
     pos++;
+    if (pos == learnedCases.length) {
+        learnedCases.sort(function(a, b){return 0.5 - Math.random()});
+        pos = 0;
+    }
 }
