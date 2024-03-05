@@ -1,5 +1,6 @@
 import { permutations } from "./permutations.js";
 import { orientations } from "./orientations.js";
+import { inverseAlg, movePermutation } from "./cubeFunctions.js";
 
 const subsets = ["SS1", "SS2", "U", "T", "Asymetric1", "Asymetric2"];
 const soap_orientations = {
@@ -16,7 +17,6 @@ const learnedCases = [];
 let pos;
 
 document.getElementById("go").onclick = () => {
-    console.log('go')
     document.getElementById("intro").style.display = 'none';
     document.getElementById("cases").style.display = 'block';
 
@@ -34,6 +34,20 @@ document.getElementById("go").onclick = () => {
 }
 
 function getCase() {
-    document.getElementById("case").innerHTML = learnedCases[pos];
+    // random state
+    const orientation = learnedCases[pos];
+    const top_permutation = ['0', '1', '2', '3'].sort((a, b) => 0.5 - Math.random());
+    const bottom_permutation = ['4', '5', '6'].sort((a, b) => 0.5 - Math.random());
+    let permutation = top_permutation.join('') + bottom_permutation.join('');
+
+    // solution
+    const orientation_solution = orientations[orientation];
+    orientation_solution.split(' ').forEach(move => {
+        permutation = movePermutation(move, permutation);
+    });
+    const permutation_solution = permutations[permutation];
+    const full_solution = orientation_solution + ' ' + permutation_solution
+
+    document.getElementById("case").innerHTML = inverseAlg(full_solution);
     pos++;
 }
