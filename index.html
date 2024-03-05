@@ -6,11 +6,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body onkeydown="getCase()" ontouchstart="getCase()">
+<body>
     <h2>SOAP trainer</h2>
     <div id="intro">
-        <div id="selection"></div>
-        <button type="button">Go</button>
+        <div id="selection">
+            <input type="radio" id="SS1">
+            <label for="SS1">
+                <img src="SS1.PNG">
+            </label>
+            <br>
+            
+            <input type="radio" id="SS2">
+            <label for="SS2">
+                <img src="SS2.PNG">
+            </label>
+            <br>
+            
+            <input type="radio" id="U">
+            <label for="U">
+                <img src="U.PNG">
+            </label>
+            <br>
+            
+            <input type="radio" id="T">
+            <label for="T">
+                <img src="T.PNG">
+            </label>
+            <br>
+            
+            <input type="radio" id="Asymetric1">
+            <label for="Asymetric1">
+                <img src="Asymetric1.PNG">
+            </label>
+            <br>
+            
+            <input type="radio" id="Asymetric2">
+            <label for="Asymetric2">
+                <img src="Asymetric2.PNG">
+            </label>
+            <br>
+        </div>
+        <button type="button" id="go">Go</button>
     </div>
     <div id="cases" style="display:none;">
         <p style="text-align: center; font-size: 10vw" id="case"></p>

@@ -17,7 +17,7 @@ var twist12 = ["frog", "kick", "merge", "push", "single", "split", "swim", "whee
 var learnedSubsets = [];
 var learnedCases = [];
 
-radioButtons();
+//radioButtons();
 
 var pos;
 
@@ -29,20 +29,23 @@ function radioButtons() {
     document.getElementById("selection").innerHTML = text;
 }
 
+document.getElementById("go").onclick = go;
+
 function go() {
+    console.log('go')
     document.getElementById("intro").style.display = 'none';
     document.getElementById("cases").style.display = 'block';
 
     //Rellenar learnedCases (equivalente a learnedPairs)
-    for (i = 0; i < subsets.length; i++) {
+    for (let i = 0; i < subsets.length; i++) {
         if (document.getElementById(subsets[i]).checked) {
             if (twists[i] == 0) {
-                for (j=0; j<twist0.length; j++) {
+                for (let j = 0; j<twist0.length; j++) {
                     learnedCases.push([subsets[i], "twist0/"+twist0[j]]);
                 }
             }
             else {
-                for (j=0; j<twist12.length; j++) {
+                for (let j = 0; j<twist12.length; j++) {
                     learnedCases.push([subsets[i], "twist"+twists[i]+"/"+twist12[j]]);
                 }
             }
