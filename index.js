@@ -7,9 +7,9 @@ const soap_orientations = {
     'SS1': ['0002010', '0110010', '0101010', '2012010', '2021010', '0221010', '1121010', '2222010'],
     'SS2': ['0001020', '0022020', '0202020', '1120020', '0121020', '0211020', '2122020', '1111020'],
     'U': ['0222021', '1110021', '1020021', '2121021', '0012021', '0021021', '1122021'],
-    'T': ['0222010', '1110010', '1020010', '2121010', '0012010', '0021010', '1122010'],
-    'Asymetric1': ['0002022', '0110022', '0101022', '2012022', '2021022', '0221022', '1121022', '2222022'],
-    'Asymetric2': ['0001011', '0022020', '0202020', '1120020', '0121020', '0211020', '2122020', '1111020'],
+    'T': ['0222012', '1110012', '1020012', '2121012', '0012012', '0021012', '1122012'],
+    'Asymetric1': [/*'0002022', */'0110022', '0101022', '2012022', '2021022', '0221022', '1121022', '2222022'],
+    'Asymetric2': [/*'0001011', */'0022011', '0202011', '1120011', '0121011', '0211011', '2122011', '1111011'],
 }
 
 const learnedCases = [];
@@ -38,7 +38,8 @@ document.body.ontouchstart = getCase;
 
 function getCase() {
     // random state
-    const orientation = learnedCases[pos];
+    const randomUTurn = ["", "U", "U2", "U'"][Math.floor(Math.random()*4)];
+    const orientation = movePermutation(randomUTurn, learnedCases[pos]);
     const top_permutation = ['0', '1', '2', '3'].sort((a, b) => 0.5 - Math.random());
     const bottom_permutation = ['4', '5', '6'].sort((a, b) => 0.5 - Math.random());
     let permutation = top_permutation.join('') + bottom_permutation.join('');
@@ -51,7 +52,30 @@ function getCase() {
     const permutation_solution = permutations[permutation];
     const full_solution = orientation_solution + ' ' + permutation_solution
 
-    document.getElementById("case").innerHTML = inverseAlg(full_solution);
+    // cleaning
+    const scramble = [];
+    let prev_move;
+    inverseAlg(full_solution).split(' ').forEach( (move, index) => {
+        if (index == 0) {
+            prev_move = move;
+            if (move[0] != "U") scramble.push(move);
+        } else {
+            if (move[0] == prev_move[0]) {
+                scramble.pop();
+                const turn = {
+                    ".": 1,
+                    "2": 2,
+                    "'": 3
+                };
+                const turn_amount = (turn[move[1]||'.'] + turn[prev_move[1]||'.'])%4;
+                if (turn_amount != 0) scramble.push(move[0] + ["", "2", "'"][turn_amount-1])
+            } else scramble.push(move);
+            prev_move = move;
+        }
+    })
+    console.log(inverseAlg(full_solution));
+
+    document.getElementById("case").innerHTML = scramble.join(' ');
     pos++;
     if (pos == learnedCases.length) {
         learnedCases.sort(function(a, b){return 0.5 - Math.random()});
