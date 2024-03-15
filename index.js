@@ -46,7 +46,7 @@ function getCase() {
 
     const solution = solve(orientation, permutation);
 
-    document.getElementById("case").innerHTML = inverseAlg(solution.join(' '));
+    document.getElementById("case").innerHTML = inverseAlg(solution).join(' ');
     pos++;
     if (pos == learnedCases.length) {
         learnedCases.sort(function(a, b){return 0.5 - Math.random()});

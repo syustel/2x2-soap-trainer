@@ -13,5 +13,5 @@ Object.keys(orientations).forEach( o => {
         max_move_count = Math.max(max_move_count, move_count);
     })
 })
-console.log('Average', total_move_count/iterations);
-console.log('Maximum', max_move_count);
+console.log('Average movecount:', total_move_count/iterations);
+console.log('Maximum movecount:', max_move_count);
