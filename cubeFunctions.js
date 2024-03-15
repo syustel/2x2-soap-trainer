@@ -1,3 +1,44 @@
+import { orientations } from "./orientations.js";
+import { permutations } from "./permutations.js";
+
+/* current performance
+average movecount: 12.714674374550917
+max movecount: 19
+*/
+export function solve(orientation, permutation) {
+    // solution
+    const orientation_solution = orientations[orientation];
+    orientation_solution.split(' ').forEach(move => {
+        permutation = movePermutation(move, permutation);
+    });
+    const permutation_solution = permutations[permutation];
+    const full_solution = orientation_solution + ' ' + permutation_solution
+
+    // cleaning
+    const clean_solution = [];
+    let prev_move;
+    full_solution.split(' ').forEach( (move, index) => {
+        if (index == 0) {
+            prev_move = move;
+            if (move[0] != "U") clean_solution.push(move);
+        } else {
+            if (move[0] == prev_move[0]) {
+                clean_solution.pop();
+                const turn = {
+                    ".": 1,
+                    "2": 2,
+                    "'": 3
+                };
+                const turn_amount = (turn[move[1]||'.'] + turn[prev_move[1]||'.'])%4;
+                if (turn_amount != 0) clean_solution.push(move[0] + ["", "2", "'"][turn_amount-1])
+            } else clean_solution.push(move);
+            prev_move = move;
+        }
+    })
+
+    return clean_solution;
+}
+
 export function inverseAlg(alg) {
     const sequence = alg.split(' ').reverse();
     const inversed = []

@@ -1,6 +1,6 @@
 import { permutations } from "./permutations.js";
 import { orientations } from "./orientations.js";
-import { inverseAlg, movePermutation } from "./cubeFunctions.js";
+import { inverseAlg, movePermutation, solve } from "./cubeFunctions.js";
 
 const subsets = ["SS1", "SS2", "U", "T", "Asymetric1", "Asymetric2"];
 const soap_orientations = {
@@ -44,38 +44,9 @@ function getCase() {
     const bottom_permutation = ['4', '5', '6'].sort((a, b) => 0.5 - Math.random());
     let permutation = top_permutation.join('') + bottom_permutation.join('');
 
-    // solution
-    const orientation_solution = orientations[orientation];
-    orientation_solution.split(' ').forEach(move => {
-        permutation = movePermutation(move, permutation);
-    });
-    const permutation_solution = permutations[permutation];
-    const full_solution = orientation_solution + ' ' + permutation_solution
+    const solution = solve(orientation, permutation);
 
-    // cleaning
-    const scramble = [];
-    let prev_move;
-    inverseAlg(full_solution).split(' ').forEach( (move, index) => {
-        if (index == 0) {
-            prev_move = move;
-            if (move[0] != "U") scramble.push(move);
-        } else {
-            if (move[0] == prev_move[0]) {
-                scramble.pop();
-                const turn = {
-                    ".": 1,
-                    "2": 2,
-                    "'": 3
-                };
-                const turn_amount = (turn[move[1]||'.'] + turn[prev_move[1]||'.'])%4;
-                if (turn_amount != 0) scramble.push(move[0] + ["", "2", "'"][turn_amount-1])
-            } else scramble.push(move);
-            prev_move = move;
-        }
-    })
-    console.log(inverseAlg(full_solution));
-
-    document.getElementById("case").innerHTML = scramble.join(' ');
+    document.getElementById("case").innerHTML = inverseAlg(solution.join(' '));
     pos++;
     if (pos == learnedCases.length) {
         learnedCases.sort(function(a, b){return 0.5 - Math.random()});
