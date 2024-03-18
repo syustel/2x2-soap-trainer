@@ -2,17 +2,20 @@ import { orientations } from "./orientations.js";
 import { permutations } from "./permutations.js";
 
 /* current performance
-Average movecount: 11.912207688287936
-Maximum movecount: 19
+Average movecount: 10.42109026280837
+Maximum movecount: 16
 */
-export function solve(orientation, permutation, check_inverse = true) {
+export function solve(orientation, permutation, check_inverse = true, axis = 'top') {
+    let shortest_solution = Array(20);
     // solution
+    //console.log('solving for params', orientation, permutation, check_inverse, axis)
     const orientation_solution = orientations[orientation];
+    const original_permutation = permutation;
     orientation_solution.split(' ').forEach(move => {
         permutation = movePermutation(move, permutation);
     });
     const permutation_solution = permutations[permutation];
-    const full_solution = orientation_solution + ' ' + permutation_solution
+    const full_solution = orientation_solution + ' ' + permutation_solution;
 
     // cleaning
     const clean_solution = [];
@@ -35,21 +38,78 @@ export function solve(orientation, permutation, check_inverse = true) {
             prev_move = move;
         }
     })
+    if (clean_solution.length < shortest_solution.length) shortest_solution = clean_solution;
 
     if (check_inverse) {
         // aply solution to get inverse
         let inverse_orientation = '0000000';
         let inverse_permutation = '0123456';
-        clean_solution.forEach( move => {
+        shortest_solution.forEach( move => {
             inverse_orientation = moveOrientation(move, inverse_orientation);
             inverse_permutation = movePermutation(move, inverse_permutation);
         })
 
-        const inverse_solution = solve(inverse_orientation, inverse_permutation, false);
-        if (inverse_solution.length < clean_solution.length) return inverseAlg(inverse_solution);
+        const inverse_solution = solve(inverse_orientation, inverse_permutation, false, axis);
+        if (inverse_solution.length < shortest_solution.length) shortest_solution = inverseAlg(inverse_solution);
     }
 
-    return clean_solution;
+    if(axis == 'top' && check_inverse) {
+        const rotation_move_dict = {
+            "U": "R",
+            "U2": "R2",
+            "U'": "R'",
+            "R": "F",
+            "R2": "F2",
+            "R'": "F'",
+            "F": "U",
+            "F2": "U2",
+            "F'": "U'",
+        }
+        // check axis X
+        const [rotated_orientation, rotated_permutation] = rotateCube(orientation, original_permutation);
+        let rotated_solution = solve(rotated_orientation, rotated_permutation, check_inverse, 'side');
+        // rotate alg
+        rotated_solution = rotated_solution.map(move => rotation_move_dict[move])
+        if (rotated_solution.length < shortest_solution.length) shortest_solution = rotated_solution;
+
+        // check axis Z
+        const [rotated_orientationZ, rotated_permutationZ] = rotateCube(rotated_orientation, rotated_permutation);
+        let rotated_solutionZ = solve(rotated_orientationZ, rotated_permutationZ, check_inverse, 'side');
+        // rotate alg
+        rotated_solutionZ = rotated_solutionZ.map(move => rotation_move_dict[move])
+        rotated_solutionZ = rotated_solutionZ.map(move => rotation_move_dict[move])
+        if (rotated_solutionZ.length < shortest_solution.length) shortest_solution = rotated_solutionZ;
+    }
+
+    return shortest_solution;
+}
+
+function rotateCube(orientation, permutation) {
+    const traslation = [6, 5, 2, 1, 0, 3, 4];
+    const rotation_perm_dict = {
+        '0': '4',
+        '1': '3',
+        '2': '2',
+        '3': '5',
+        '4': '6',
+        '5': '1',
+        '6': '0',
+    }
+    const new_permutation = traslation.map( t => rotation_perm_dict[permutation.at(t)]);
+    //new_permutation = new_permutation.map( p => rotation_perm_dict[p]).join('');
+
+    let new_orientation = traslation.map( t => orientation.at(t));
+    new_orientation = new_orientation.map( (p, i) => {
+        if ((parseInt(new_permutation[i]) + i)%2 == 0) {
+            return p;
+        } else if (i%2 == 0) {
+            return String((parseInt(p) + 1)%3);
+        } else {
+            return String((parseInt(p) + 2)%3);
+        }
+    })
+
+    return [new_orientation.join(''), new_permutation.join('')];
 }
 
 export function inverseAlg(alg) {
